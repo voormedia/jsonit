@@ -22,7 +22,6 @@ Jsonit::Builder.new do |json|
   json.alpha do
     json.bravo do
       json.charlie "delta"
-      end
     end
   end
 end.to_json #=> {"foo":{"bar":"baz"},"alpha":{"bravo":{"charlie":"delta"}}}
