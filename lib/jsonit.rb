@@ -1,3 +1,3 @@
 module Jsonit
-  # Your code goes here...
+  require "jsonit/rails/railtie" if defined?(Rails)
 end

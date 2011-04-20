@@ -1,5 +1,8 @@
 module Jsonit
   class Builder
+
+    instance_methods.each { |m| undef_method(m) unless m.to_s =~ /^__|object_id/ }
+
     def initialize
       @document = scoped! do
         yield self if block_given?
