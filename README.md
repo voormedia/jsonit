@@ -167,6 +167,6 @@ Jsonit is currently under active development.
 
 ## LICENSE
 
-Json is Copyright (c) 2011 Klaas Speller and Voormedia and distributed under the MIT license. See the LICENCE file for more info.
+Json is Copyright (c) 2011 Voormedia B.V. and distributed under the MIT license. See the LICENSE file for more info.
 
 
