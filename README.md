@@ -93,7 +93,7 @@ In your Gemfile:
 
 ``` ruby
 gem 'json'
-gem 'jsonit`
+gem 'jsonit'
 ```
 
 In `views/index.jsonit`:
