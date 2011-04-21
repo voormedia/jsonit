@@ -4,7 +4,12 @@ Jsonit provides a way to quickly construct handcrafted json documents.
 Jsonit requires objects to respond to `#to_json`.  
 It will attempt to load the json gem if this is not the case.
 
+## Installation
+
+`gem install jsonit`
+
 ## Usage
+
 
 ``` ruby
 require 'json'    # Jsonit expects a #to_json method on object.
