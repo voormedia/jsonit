@@ -121,7 +121,7 @@ In your Gemfile:
 
 ``` ruby
 gem 'json'
-gem 'jsonit`
+gem 'jsonit'
 ```
 
 In `app/views/photos/index.json.jsonit`:
