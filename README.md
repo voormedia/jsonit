@@ -155,7 +155,7 @@ MyApp.controllers :photos do
   end
 
   get :show, :with => :photo_id, :provides => :json do
-    render :'photo/show'
+    render :'photos/show'
   end
 end
 ```
