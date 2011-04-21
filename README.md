@@ -1,11 +1,11 @@
 # Jsonit
 
-Jsonit provides a way to quickly construct json documents.  
+Jsonit provides a way to quickly construct handcrafted json documents.
 
 ## Usage
 
 ``` ruby
-require 'json'
+require 'json'    # Jsonit expects a #to_json method on object.
 require 'jsonit'
 
 # a simple object
@@ -41,20 +41,26 @@ end.to_json #=> {"first":[1, 2, 3],"second":[{"value":1},{"value":2},{"value":3}
 
 Jsonit can be used with rails 3.
 
-``` ruby
-class PhotosController < ApplicationController
-  respond_to :json
+In `app/helpers/photos_helper.rb`
 
-  private
+``` ruby
+class PhotosHelper
   def photos
     Photo.all
   end
-  helper_method :photos
+end
+```
+
+In `app/controllers/photos_controller.rb`
+
+``` ruby
+class PhotosController < ApplicationController
+  respond_to :json
 end
 
 ```
 
-`app/views/photos/index.json.jsonit`
+In `app/views/photos/index.json.jsonit`
 
 ``` ruby
 json.ok true
@@ -64,7 +70,7 @@ json.data photos do |photo|
 end
 ```
 
-result:
+Result will be something like:
 
 ``` json
 {
@@ -82,4 +88,9 @@ result:
 ## Project status
 
 Jsonit is currently under active development and not yet released as gem.
+
+## LICENSE
+
+Json is Copyright (c) 2011 Klaas Speller and Voormedia and distributed under the MIT license. See the COPYING file for more info.
+
 
