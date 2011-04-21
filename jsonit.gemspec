@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "jsonit"
 
   s.add_development_dependency "json"
-  s.add_dependency "tilt"
+  s.add_development_dependency "tilt"
   s.add_development_dependency "rspec"
 
   s.files         = `git ls-files`.split("\n")

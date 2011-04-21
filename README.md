@@ -1,6 +1,8 @@
 # Jsonit
 
-Jsonit provides a way to quickly construct handcrafted json documents.
+Jsonit provides a way to quickly construct handcrafted json documents.  
+Jsonit requires objects to respond to `#to_json`.  
+It will attempt to load the json gem if this is not the case.
 
 ## Usage
 
@@ -156,10 +158,10 @@ end
 
 ## Project status
 
-Jsonit is currently under active development and not yet released as gem.
+Jsonit is currently under active development.
 
 ## LICENSE
 
-Json is Copyright (c) 2011 Klaas Speller and Voormedia and distributed under the MIT license. See the COPYING file for more info.
+Json is Copyright (c) 2011 Klaas Speller and Voormedia and distributed under the MIT license. See the LICENCE file for more info.
 
 
