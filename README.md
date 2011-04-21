@@ -65,7 +65,7 @@ In `app/views/photos/index.json.jsonit`
 ``` ruby
 json.ok true
 json.data photos do |photo|
-  photo.title photo.title
+  photo.title    photo.title
   photo.location url_for(photo)
 end
 ```
@@ -84,6 +84,75 @@ Result will be something like:
 }
 
 ```
+
+## Sinatra
+
+Jsonit can be used with Sinatra.
+
+In your Gemfile:
+
+``` ruby
+gem 'json'
+gem 'jsonit`
+```
+
+In `views/index.jsonit`:
+
+``` ruby
+json.foo "bar"
+```
+
+In your app:
+
+``` ruby
+class App < Sinatra::Base
+  get "/" do
+    jsonit :index
+  end
+end
+```
+
+
+## Padrino
+
+Jsonit can be used with Padrino.
+
+In your Gemfile:
+
+``` ruby
+gem 'json'
+gem 'jsonit`
+```
+
+In `app/views/photos/index.json.jsonit`:
+
+``` ruby
+json.photos photos do |photo|
+  json.title    photo.title
+  json.location url_for(:photos, :show, :photo_id => photo.id)
+end
+```
+
+In your controller:
+
+``` ruby
+MyApp.controllers :photos do
+  helpers do
+    def photos
+      Photos.all
+    end
+  end
+
+  get :index, :provides => :json do
+    render :'photos/index'
+  end
+
+  get :show, :with => :photo_id, :provides => :json do
+    render :'photo/show'
+  end
+end
+```
+
 
 ## Project status
 
