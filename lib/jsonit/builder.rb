@@ -18,7 +18,11 @@ module Jsonit
 
     def set!(key=nil, value=nil, &blk)
       if !block_given?
-        @current_scope[key] = value
+        if value.is_a?(Hash) && @current_scope[key].is_a?(Hash)
+          @current_scope[key].merge!(value)
+        else
+          @current_scope[key] = value
+        end
       elsif value.is_a?(Enumerable)
         array!(key, value, &blk)
       else

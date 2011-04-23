@@ -62,6 +62,12 @@ describe Jsonit::Builder do
     it 'sets scope to the object' do
       json.object!(:foo) { json.set!(:bar, "baz") }.to_json.should == %|{"foo":{"bar":"baz"}}|
     end
+
+    it 'continues an object with same key' do
+      json.object!(:foo) { json.set!(:a, "b") }
+      json.object!(:foo) { json.set!(:c, "d") }
+      json.to_json.should == %|{"foo":{"a":"b","c":"d"}}|
+    end
   end
 
   describe "#array!" do
