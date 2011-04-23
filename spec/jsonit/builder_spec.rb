@@ -26,7 +26,7 @@ describe Jsonit::Builder do
     let(:json) { Jsonit::Builder.new }
 
     it 'returns an instance of self' do
-      json.set!.should be_a json.class
+      json.set!.should be_a Jsonit::Builder
     end
 
     it 'sets a key value pair' do
