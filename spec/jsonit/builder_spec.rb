@@ -1,64 +1,109 @@
 require "spec_helper"
 require "jsonit/builder"
 
-describe Jsonit::Builder, "Building json" do
-  specify "a simple object" do
-    Jsonit::Builder.new.to_json.should == %|{}|
+describe Jsonit::Builder do
+
+  describe ".new" do
+    it 'represents an empty object' do
+      Jsonit::Builder.new.to_json.should == %|{}|
+    end
+
+    it 'sets the root scope if provided' do
+      scope = { :foo => "bar" }
+      Jsonit::Builder.new(scope).to_json.should == %|{"foo":"bar"}|
+    end
+
+    it 'evaluates the passed block' do
+      obj = mock()
+      obj.expects(:ping).once
+      Jsonit::Builder.new do |json|
+        obj.ping
+      end.to_json
+    end
   end
 
-  specify "a simple object with a string value" do
-    Jsonit::Builder.new do |json|
-      json.foo "bar"
-    end.to_json.should == %|{"foo":"bar"}|
+  describe "#set!" do
+    let(:json) { Jsonit::Builder.new }
+
+    it 'returns an instance of self' do
+      json.set!.should be_a json.class
+    end
+
+    it 'sets a key value pair' do
+      json.set!(:foo, "bar").to_json.should == %|{"foo":"bar"}|
+    end
+
+    it 'sets value to null if not provided' do
+      json.set!(:foo).to_json.should == %|{"foo":null}|
+    end
+
+    it 'sets value to an object if block is provided' do
+      json.set!(:foo) { }.to_json.should == %|{"foo":{}}|
+    end
+
+    it 'sets values on nested object within block' do
+      json.set!(:foo) { json.set!(:a, "b") }.should == %|{"foo":{"a":"b"}}|
+    end
   end
 
-  specify "#to_json" do
-    expect { Jsonit::Builder.new.to_json }.to_not raise_error
+  describe "#object!" do
+    let(:json) { Jsonit::Builder.new }
+
+    it 'creates an object' do
+      json.object!(:foo) { }.to_json.should == %|{"foo":{}}|
+    end
+
+    it 'passes value to the block' do
+      value = mock()
+      value.expects(:ping)
+      json.object!(:foo, value) { |val| val.ping }
+    end
+
+    it 'sets scope to the object' do
+      json.object!(:foo) { json.set!(:bar, "baz") }.to_json.should == %|{"foo":{"bar":"baz"}}|
+    end
   end
 
-  specify "a nested object" do
-    Jsonit::Builder.new do |json|
-      json.foo do
-        json.bar "baz"
-      end
+  describe "#array!" do
+    let(:json) { Jsonit::Builder.new }
 
-      json.alpha do
-        json.bravo "charlie"
-        json.delta "echo"
+    it 'creates an array' do
+      json.array!(:foo).to_json.should == %|{"foo":[]}|
+    end
 
-        json.foxtrot do
-          json.golf "hotel"
+    it 'sets value to array if no block is given' do
+      json.array!(:foo, ["a", 1, false]).to_json.should == %|{"foo":["a",1,false]}|
+    end
+
+    it 'executes block for each entry in the collection' do
+      obj1, obj2 = mock(), mock()
+      obj1.expects(:ping).once
+      obj2.expects(:ping).once
+
+      json.array!(:foo, [obj1, obj2]) { |obj| obj.ping }.to_json
+    end
+
+    it 'creates an object for each entry' do
+      json.array!(:foo, [1,"a"]) { |val| json.set!(:val, val) }.to_json.should == %|{"foo":[{"val":1},{"val":"a"}]}|
+    end
+  end
+
+  describe "DSL" do
+    it "can nest multiple levels" do
+      Jsonit::Builder.new do |json|
+        json.foo do
+          json.bar "baz"
         end
-      end
-    end.to_json.should == %|{"foo":{"bar":"baz"},"alpha":{"bravo":"charlie","delta":"echo","foxtrot":{"golf":"hotel"}}}|
-  end
 
-  specify "an array" do
-    Jsonit::Builder.new do |json|
-      json.foo [1, "bar", false, true]
-    end.to_json.should == %|{"foo":[1,"bar",false,true]}|
-  end
+        json.alpha do
+          json.bravo "charlie"
+          json.delta "echo"
 
-  specify "explicit keys" do
-    Jsonit::Builder.new do |json|
-      json.set! :foo, "bar"
-    end.to_json.should == %|{"foo":"bar"}|
-  end
-  
-  specify "explicit with block" do
-    Jsonit::Builder.new do |json|
-      json.set! :foo  do
-        json.set! :bar, "baz"
-      end
-    end.to_json.should == %|{"foo":{"bar":"baz"}}|
-  end
-
-  specify "collections with a block" do
-    Jsonit::Builder.new do |json|
-      json.foos ["bar", "baz"] do |item|
-        json.value item
-      end
-      json.foo "bar"
-    end.to_json.should == %|{"foos":[{"value":"bar"},{"value":"baz"}],"foo":"bar"}|
+          json.foxtrot do
+            json.golf "hotel"
+          end
+        end
+      end.to_json.should == %|{"foo":{"bar":"baz"},"alpha":{"bravo":"charlie","delta":"echo","foxtrot":{"golf":"hotel"}}}|
+    end
   end
 end
