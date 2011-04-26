@@ -94,6 +94,56 @@ describe Jsonit::Builder do
     end
   end
 
+
+  describe "#assign!" do
+    let(:json) { Jsonit::Builder.new }
+
+    it 'returns an instance of self' do
+      json.assign!(:foo).should be_a Jsonit::Builder
+    end
+
+    it 'creates a key value pair' do
+      json.assign!(:foo, "bar").to_json.should == %|{"foo":"bar"}|
+    end
+
+    it 'can assign an array' do
+      json.assign!(:foo, ["a", "b", "c"]).to_json.should == %|{"foo":["a","b","c"]}|
+    end
+    
+    it 'can assign an object' do
+      json.assign!(:foo, {"a" => "b"}).to_json.should == %|{"foo":{"a":"b"}}|
+    end
+
+    it 'continues an object with same key' do
+      json.assign!(:foo, {"a" => "b"})
+      json.assign!(:foo, {"c" => "d"})
+      json.to_json.should == %|{"foo":{"a":"b","c":"d"}}|
+    end
+  end
+
+  describe "ghost methods" do
+    let(:json) { Jsonit::Builder.new }
+    
+    it 'does not raise method missing for method with format /^[a-z][a-z0-9]+$/' do
+      [:a, :b, :c].each do |m|
+        expect { json.send(m) }.to_not raise_error
+      end
+    end
+
+
+    it 'raises method missing for ending with a "?"' do
+      [:a?, :b?, :c?].each do |m|
+        expect { eval("json.#{m.to_s}") }.to raise_error(NoMethodError)
+      end
+    end
+    
+    it 'raises method missing for ending with a "!"' do
+      [:a!, :b!, :c!].each do |m|
+        expect { eval("json.#{m.to_s}") }.to raise_error(NoMethodError)
+      end
+    end
+  end
+
   describe "DSL" do
     it "can nest multiple levels" do
       Jsonit::Builder.new do |json|

@@ -1,7 +1,7 @@
 module Jsonit
   class Builder
 
-    instance_methods.each { |m| undef_method(m) unless m.to_s =~ /^__|object_id|\?$/ }
+    instance_methods.each { |m| undef_method(m) unless m.to_s =~ /^__|object_id|\?$|!$/ }
 
     def initialize(scope={})
       @document = @current_scope = scope
@@ -18,11 +18,7 @@ module Jsonit
 
     def set!(key=nil, value=nil, &blk)
       if !block_given?
-        if value.is_a?(Hash) && @current_scope[key].is_a?(Hash)
-          @current_scope[key].merge!(value)
-        else
-          @current_scope[key] = value
-        end
+        assign!(key, value)
       elsif value.is_a?(Enumerable)
         array!(key, value, &blk)
       else
@@ -30,18 +26,33 @@ module Jsonit
       end
       self
     end
-    alias_method :method_missing, :set!
-    
+
     def object!(key=nil, value=nil, &blk)
       @current_scope, previous_scope = {}, @current_scope
       yield value
       @current_scope, new_scope = previous_scope, @current_scope
-      !key.nil? ? set!(key, new_scope) : Builder.new(new_scope)
+      !key.nil? ? assign!(key, new_scope) : Builder.new(new_scope)
     end
     
     def array!(key, collection=[], &blk)
       collection.map! { |itm| object!(nil, itm, &blk) } if block_given?
-      set!(key, collection)
+      assign!(key, collection)
+    end
+
+    def assign!(key, value=nil)
+      if value.is_a?(Hash) && @current_scope[key].is_a?(Hash)
+        @current_scope[key].merge!(value)
+      else
+        @current_scope[key] = value
+      end
+      self
+    end
+    
+    def method_missing(meth, *args, &blk)
+      if (meth.to_s =~ /\?$|!$/).nil?
+        return set!(meth, *args, &blk)
+      end
+      super
     end
   end
 end
