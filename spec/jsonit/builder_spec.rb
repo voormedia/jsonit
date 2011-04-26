@@ -126,10 +126,9 @@ describe Jsonit::Builder do
     
     it 'does not raise method missing for method with format /^[a-z][a-z0-9]+$/' do
       [:a, :b, :c].each do |m|
-        expect { json.send(m) }.to_not raise_error
+        expect { eval("json.#{m.to_s}") }.to_not raise_error(NoMethodError)
       end
     end
-
 
     it 'raises method missing for ending with a "?"' do
       [:a?, :b?, :c?].each do |m|
