@@ -141,6 +141,16 @@ describe Jsonit::Builder do
         expect { eval("json.#{m.to_s}") }.to raise_error(NoMethodError)
       end
     end
+
+    it 'ignores #encode_json' do
+      json.encode_json
+      json.to_json.should_not match /"encode_json"/
+    end
+    
+    it 'ignores #as_json' do
+      json.as_json
+      json.to_json.should_not match /"as_json"/
+    end
   end
 
   describe "DSL" do

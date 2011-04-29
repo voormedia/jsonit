@@ -15,6 +15,12 @@ module Jsonit
     def to_json(*args)
       @document.to_json(*args)
     end
+    alias_method :as_json, :to_json
+
+    def encode_json(*)
+      @document
+    end
+    alias_method :as_json, :encode_json
 
     def set!(key=nil, value=nil, &blk)
       if !block_given?
