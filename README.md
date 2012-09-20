@@ -1,7 +1,11 @@
+**NOTE: Jsonit is no longer maintained. We recommend you use
+[Jbuilder](https://github.com/rails/jbuilder) instead. It offers similar
+functionality.**
+
 # Jsonit
 
-Jsonit provides a way to quickly construct handcrafted json documents.  
-Jsonit requires objects to respond to `#to_json`.  
+Jsonit provides a way to quickly construct handcrafted json documents.
+Jsonit requires objects to respond to `#to_json`.
 It will attempt to load the json gem if this is not the case.
 
 ## Installation
@@ -25,7 +29,7 @@ Jsonit::Builder.new do |json|
   json.foo do
     json.bar "baz"
   end
-  
+
   json.alpha do
     json.bravo do
       json.charlie "delta"
